@@ -9,6 +9,9 @@ import Navigation from './components/navigation/Navigation'
 import Login from './components/pages/Login'
 import Logout from './components/Logout'
 import Signup from './components/pages/Signup'
+import AddAlbum from './components/pages/AddAlbum'
+import Album from './components/pages/Album'
+import Albums from './components/pages/Albums'
 
 const App = () => {
 	return (
@@ -36,13 +39,25 @@ const App = () => {
 						<Route path="/signup">
 							<Signup/>
 						</Route>
+
+						<Route path="/add-album">
+							<AddAlbum/>
+						</Route>
+
+						<Route path="/album/:albumId">
+							<Album/>
+						</Route>
+
+						<Route path="/albums">
+							<Albums/>
+						</Route>
 						
 					</Routes>
 
 				</Container>
 
 			</AuthContextProvider>
-			
+
 		</BrowserRouter>
 	)
 }

@@ -1,1 +1,7 @@
 @import '~bootstrap/scss/bootstrap';
+
+.dropzone {
+    background-color: lightgrey;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+}

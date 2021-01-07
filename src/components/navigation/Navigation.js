@@ -20,6 +20,8 @@ const Navigation = () => {
                         {currentUser 
                             ? 
                             (<>
+                                <NavLink className="mr-3" to="/albums">Albums</NavLink>
+                                <NavLink className="mr-3" to="/add-album">Add album</NavLink>
                                 <NavLink to="/logout">Logout</NavLink>
                             </>)
                             : 
