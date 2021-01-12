@@ -11,7 +11,6 @@ import firebase from 'firebase/app'
 const Album = () => {
     const [title, setTitle] = useState(null)
     const [description, setDescription] = useState(null)
-    const [images, setImages] = useState(null)
     const [tempImages, setTempImages] = useState([])
     const [error, setError] = useState(null)
 
@@ -85,10 +84,16 @@ const Album = () => {
 
                 <Form onSubmit={handleSubmit}>
                     {error && (<Alert variant="danger">{error}</Alert>)}
-                    {/* TODO: Update title and description */}
                     {/* TODO: Set save success */}
-                    <h1>{title}</h1>
-                    <p>{description}</p>
+
+                    <Form.Group>
+                        <Form.Control className="title-input" type="text" onChange={e => setTitle(e.target.value)} value={title} />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Control className="description-input" type="text" onChange={e => setDescription(e.target.value)} value={description} />
+                    </Form.Group>
+
                     <div {...getRootProps()} className="dropzone mb-4">
                         <input {...getInputProps()} />
                         {
