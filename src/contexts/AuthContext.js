@@ -5,7 +5,7 @@ const AuthContext = createContext()
 
 const AuthContextProvider = (props) => {
     const [currentUser, setCurrentUser] = useState(null)
-    const [loading, setLoading] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const signup = (email, password) => {
         return auth.createUserWithEmailAndPassword(email, password)
@@ -31,6 +31,7 @@ const AuthContextProvider = (props) => {
 
     const contextValues = {
         currentUser,
+        loading,
         login,
         logout,
         signup,
