@@ -20,6 +20,7 @@ const AddAlbum = () => {
             title: titleRef.current.value,
             owner: currentUser.uid,
             description: descriptionRef.current.value,
+            images: []
         })
         .then(docRef => {
             // navigate to the album, where you can add the images

@@ -19,7 +19,7 @@ const Albums = () => {
                         ...doc.data()
                     })
                 })
-                
+
                 setAlbums(albumsArray)
             })
         }
@@ -27,6 +27,7 @@ const Albums = () => {
 
     return (
         <div>
+        {/* TODO: If the user does not have any albums */}
             {!albums ? (<p>Loading...</p>) : (
                 <ul>
                     {albums.map(album => (

@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useParams } from 'react-router-dom'
 import { db, storage } from '../../firebase/index'
-import {Alert, Row, Col} from 'react-bootstrap'
-import {AuthContext} from '../../contexts/AuthContext'
+import { Alert, Row, Col, Image, Form, Button } from 'react-bootstrap'
+import { AuthContext } from '../../contexts/AuthContext'
 import firebase from 'firebase/app'
 
 // TODO: Make component smaller
@@ -12,6 +12,7 @@ const Album = () => {
     const [title, setTitle] = useState(null)
     const [description, setDescription] = useState(null)
     const [images, setImages] = useState(null)
+    const [tempImages, setTempImages] = useState([])
     const [error, setError] = useState(null)
 
     const { albumId } = useParams()
@@ -23,8 +24,9 @@ const Album = () => {
             if (doc.exists) {
                 setTitle(doc.data().title)
                 setDescription(doc.data().description)
-                setImages(doc.data().images)
+                setTempImages(doc.data().images)
             } else {
+                // TODO: Show only error if album does not exist
                 setError('This album does not exist!')
             }
         }).catch(error => {
@@ -35,7 +37,7 @@ const Album = () => {
     
     const onDrop = useCallback(acceptedFiles => {
         acceptedFiles.forEach(image => {
-            // TODO: What even is this??
+            // TODO: What even is this?? SQUASH THIS BUG!
             if(currentUser) {
                 uploadImageToStorage(image)
             } else {
@@ -44,8 +46,17 @@ const Album = () => {
         })
     }, [])
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        await db.collection('albums').doc(albumId).update({
+            title,
+            description,
+            images: firebase.firestore.FieldValue.arrayUnion(...tempImages)
+        });
+    }
+
     const uploadImageToStorage = (image) => {
-        const storageRef = storage.ref(`images/${currentUser.uid}/${image.name}`);
+        const storageRef = storage.ref(`images/${currentUser.uid}/${albumId}/${image.name}`);
 
         const uploadTask = storageRef.put(image);
 
@@ -59,42 +70,53 @@ const Album = () => {
 				type: image.type,
 				url,
             };
-
-            await db.collection('albums').doc(albumId).update({
-                images: firebase.firestore.FieldValue.arrayUnion(img)
-            });
+            setTempImages(prev => ([...prev, img]))
+        })
+        .catch(error => {
+            setError(error)
         })
     }
-    
+
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
     return (
         <Row>
             <Col xs={{ span: 10, offset: 1 }}>
-                {error && (<Alert variant="danger">{error}</Alert>)}
-                <h1>{title}</h1>
-                <p>{description}</p>
-                <div {...getRootProps()} className="dropzone">
-                    <input {...getInputProps()} />
-                    {
-                        isDragActive ?
-                        <p>Drop the files here ...</p> :
-                        <p>Drag 'n' drop some files here, or click to select files</p>
-                    }
-                </div>
 
-                {/* TODO: make images look nice... and make loading better, what if there are no images? Make them show up instantly  */}
+                <Form onSubmit={handleSubmit}>
+                    {error && (<Alert variant="danger">{error}</Alert>)}
+                    {/* TODO: Update title and description */}
+                    {/* TODO: Set save success */}
+                    <h1>{title}</h1>
+                    <p>{description}</p>
+                    <div {...getRootProps()} className="dropzone mb-4">
+                        <input {...getInputProps()} />
+                        {
+                            isDragActive ?
+                            <p>Drop the files here ...</p> :
+                            <p>Drag 'n' drop some files here, or click to select files</p>
+                        }
+                    </div>
 
-                {images ? (
-                    <>
-                    {images.map(image => (
-                        <img key={image.name} src={image.url}/>
-                    ))}
-                    </>
-                )
-                : (<p>Loading...</p>)}
+                    {tempImages ? (
+                        <>
+                        {tempImages.length > 0 
+                        ? (
+                            <>
+                            {tempImages.map(image => (
+                                <Image src={image.url} fluid className="mb-3"/>
+                            ))}
+                            </>
+                        ) 
+                        : (
+                            <p>There are no images in this album yet...</p>
+                        )}
+                        </>
+                    )
+                    : (<p>Loading...</p>)}
 
-                {/* TODO: Add form */}
+                    <Button variant="primary" type="submit">Save</Button>
+                </Form>
             </Col>
         </Row>
     )
