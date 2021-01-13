@@ -23,7 +23,7 @@ const useAlbum = (albumId) => {
         setError(error);
     });
 
-    }, [])
+    }, [albumId])
 
     return {title, setTitle, description, setDescription, images, setImages, error, setError, loading}
 }

@@ -1,5 +1,11 @@
 @import '~bootstrap/scss/bootstrap';
 
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 .dropzone {
     background-color: lightgrey;
     padding: 1rem 1.5rem;
@@ -29,4 +35,15 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 0.5rem;
+}
+
+.image-container {
+    position: relative;
+
+    .add {
+        position: absolute;
+        left: 10px;
+        background-color: green;
+        padding: 5px;
+    }
 }
