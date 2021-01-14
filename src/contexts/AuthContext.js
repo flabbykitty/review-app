@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import { auth } from '../firebase/index'
+import { Spinner } from 'react-bootstrap'
 
 const AuthContext = createContext()
 
@@ -39,7 +40,7 @@ const AuthContextProvider = (props) => {
 
     return (
         <AuthContext.Provider value={contextValues}>
-			{loading && (<div>Loading...</div>)}
+			{loading && (<Spinner animation="border" />)}
 			{!loading && props.children}
 		</AuthContext.Provider>
     )

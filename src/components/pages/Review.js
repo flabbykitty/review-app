@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Row, Alert, Col, Form, Card, Button } from 'react-bootstrap'
+import { Row, Alert, Col, Form, Card, Button, Spinner } from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import useAlbum from '../../hooks/useAlbum'
 import { SRLWrapper } from 'simple-react-lightbox'
@@ -107,7 +107,7 @@ const Review = () => {
             <Col xs={{ span: 10, offset: 1 }}>
 
             {loading 
-                ? (<p>Loading...</p>) 
+                ? (<Spinner animation="border" />) 
                 : (
                     <Form>
                         {error && (<Alert variant="danger">{error}</Alert>)}
@@ -141,8 +141,8 @@ const Review = () => {
                             )}
                             </>
                         )
-                        : (<p>Loading...</p>)}
-                        {ready && (<Button onClick={handleSend}>Save</Button>)}
+                        : (<Spinner animation="border" />)}
+                        {ready && (<Button className="mt-4" onClick={handleSend}>Save</Button>)}
                         
                     </Form>
                 )}

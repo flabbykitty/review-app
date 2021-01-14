@@ -3,6 +3,7 @@ import { db } from '../../firebase/index'
 import { AuthContext } from '../../contexts/AuthContext'
 import AlbumListItem from '../AlbumListItem'
 import { Link } from 'react-router-dom'
+import { Spinner } from 'react-bootstrap'
 
 const Albums = () => {
     const { currentUser } = useContext(AuthContext)
@@ -28,7 +29,7 @@ const Albums = () => {
 
     return (
         <div>
-            {!albums ? (<p>Loading...</p>) : (
+            {albums.length <= 0 ? (<Spinner animation="border" />) : (
                 <>
                     {albums.length > 0
                     ? (

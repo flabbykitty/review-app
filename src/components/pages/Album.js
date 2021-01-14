@@ -2,7 +2,7 @@ import React, { useCallback, useState, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useParams, useNavigate } from 'react-router-dom'
 import { db, storage } from '../../firebase/index'
-import { Alert, Row, Col, Card, Form, Button } from 'react-bootstrap'
+import { Alert, Row, Col, Card, Form, Button, Spinner } from 'react-bootstrap'
 import { AuthContext } from '../../contexts/AuthContext'
 import firebase from 'firebase/app'
 import useAlbum from '../../hooks/useAlbum'
@@ -16,6 +16,7 @@ const Album = () => {
     const navigate = useNavigate()
 
     const [selectedImages, setSelectedImages] = useState([])
+    const [link, setLink] = useState(null)
 
     const {title, setTitle, description, setDescription, images, setImages, error, setError, loading} = useAlbum(albumId)
     
@@ -42,9 +43,7 @@ const Album = () => {
         // Check if the ref already exists
         storageRef.getMetadata()
         .then(() => {
-            // TODO: This error shows after creating a new album from selected images, make it not so
-            // Currently it shows just because the image is already in storage, I just wanna show it when it's not in the album... 
-            setError('This image is already in the album')
+            // TODO: Set error message if the image is already in that album, not just in storage
             // If the ref already exists:
             storageRef.getMetadata().then((metadata) => {
                 const img = {
@@ -136,7 +135,7 @@ const Album = () => {
             <Col xs={{ span: 10, offset: 1 }}>
 
             {loading 
-                ? (<p>Loading...</p>) 
+                ? (<Spinner animation="border" />) 
                 : (
                     <Form onSubmit={handleSubmit}>
                         {error && (<Alert variant="danger">{error}</Alert>)}
@@ -164,7 +163,6 @@ const Album = () => {
                             {images.length > 0 
                             ? (
                                 <SRLWrapper>
-                                {/* Have I done something here to make it break?? */}
                                     <div className="grid">
                                     {images.map(image => (
                                         <Card key={image.name}>
@@ -186,13 +184,17 @@ const Album = () => {
                             </>
                         )
                         : (<p>Loading...</p>)}
-                        {/* TODO: Remove the save button, and just have it save automatically? Can I do that? */}
                         <div className="mt-4">
                             <Button className="mr-3" variant="primary" type="submit">Save</Button>
                             {selectedImages.length > 0 && (<Button className="mr-3" variant="primary" onClick={handleNewAlbum}>Create new album</Button>)}
-                            {/* TODO: Do not redirect to the page, just show the link */}
-                            <Button type="button" onClick={() => navigate(`/review/${albumId}`)}>Get link</Button>
+                            <Button type="button" onClick={() => setLink(`${window.location.origin}/review/${albumId}`)}>Get link</Button>
                         </div>
+                        
+                        {link && (
+                            <div className="d-inline-block bg-light p-2 mt-3">
+                                <code>{link}</code>
+                            </div>
+                        )}
                     </Form>
                 )}
 
