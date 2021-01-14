@@ -2,6 +2,7 @@ import './assets/style.scss';
 import {BrowserRouter, Route, Routes, } from 'react-router-dom'
 import { Container } from 'react-bootstrap';
 import AuthContextProvider from './contexts/AuthContext'
+import AuthRoute from './routes/AuthRoute'
 
 //Compontens
 import Home from './components/pages/Home'
@@ -12,6 +13,7 @@ import Signup from './components/pages/Signup'
 import AddAlbum from './components/pages/AddAlbum'
 import Album from './components/pages/Album'
 import Albums from './components/pages/Albums'
+import Review from './components/pages/Review'
 
 const App = () => {
 	return (
@@ -39,17 +41,21 @@ const App = () => {
 						<Route path="/signup">
 							<Signup/>
 						</Route>
-
-						<Route path="/add-album">
+						
+						<AuthRoute path="/add-album">
 							<AddAlbum/>
-						</Route>
+						</AuthRoute>
 
-						<Route path="/album/:albumId">
+						<AuthRoute path="/album/:albumId">
 							<Album/>
-						</Route>
+						</AuthRoute>
 
-						<Route path="/albums">
+						<AuthRoute path="/albums">
 							<Albums/>
+						</AuthRoute>
+
+						<Route path="/review/:albumId">
+							<Review/>
 						</Route>
 						
 					</Routes>

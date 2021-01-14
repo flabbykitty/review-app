@@ -113,7 +113,6 @@ const Album = () => {
         .catch(error => {
             setError(error)
         });
-
     }
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
@@ -168,6 +167,7 @@ const Album = () => {
 
                         <Button variant="primary" type="submit">Save</Button>
                         {selectedImages.length > 0 && (<Button variant="primary" onClick={handleNewAlbum}>Create new album</Button>)}
+                        <Button type="button" onClick={() => navigate(`/review/${albumId}`)}>Get link</Button>
                     </Form>
                 )}
 
