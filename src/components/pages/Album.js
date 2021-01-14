@@ -42,6 +42,9 @@ const Album = () => {
         // Check if the ref already exists
         storageRef.getMetadata()
         .then(() => {
+            // TODO: This error shows after creating a new album from selected images, make it not so
+            // Currently it shows just because the image is already in storage, I just wanna show it when it's not in the album... 
+            setError('This image is already in the album')
             // If the ref already exists:
             storageRef.getMetadata().then((metadata) => {
                 const img = {
@@ -100,7 +103,6 @@ const Album = () => {
         });
     }
 
-    // TODO: Fix everything breaking when trying to create a new album from selected images... 
     const handleNewAlbum = () => {
         db.collection("albums").add({
             title: 'New album',
@@ -108,8 +110,8 @@ const Album = () => {
             description: 'New description',
             images: []
         })
-        .then(async docRef => {
-            await selectedImages.forEach(image => {
+        .then(docRef => {
+            selectedImages.forEach(image => {
                 const ref = storage.refFromURL(image)
                 uploadImageToStorage(ref, docRef.id)
             })
@@ -122,7 +124,8 @@ const Album = () => {
     }
 
     const handleSelectedImages = (e) => {
-        setSelectedImages(prev => [...prev, e.target.attributes.target])
+        // TODO: I wanna be able to deselect images also...
+        setSelectedImages(prev => [...prev, e.target.attributes.target.textContent])
         // TODO: Change the + to a tick, and change color to green
     }
 
@@ -164,15 +167,15 @@ const Album = () => {
                                 {/* Have I done something here to make it break?? */}
                                     <div className="grid">
                                     {images.map(image => (
-                                            <Card key={image.name}>
-                                                <Card.Img variant="top" src={image.url} />
-                                                <Card.Body>
-                                                    <Card.Title>{image.name}</Card.Title>
-                                                    <div className="d-flex justify-content-between">
-                                                        <Button target={image.url} onClick={handleSelectedImages} variant="primary">+</Button>
-                                                    </div>
-                                                </Card.Body>
-                                            </Card>
+                                        <Card key={image.name}>
+                                            <Card.Img variant="top" src={image.url} />
+                                            <Card.Body>
+                                                <Card.Title>{image.name}</Card.Title>
+                                                <div className="d-flex justify-content-between">
+                                                    <Button target={image.url} onClick={handleSelectedImages} variant="primary">+</Button>
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
                                     ))}
                                     </div>
                                 </SRLWrapper>
@@ -184,9 +187,12 @@ const Album = () => {
                         )
                         : (<p>Loading...</p>)}
                         {/* TODO: Remove the save button, and just have it save automatically? Can I do that? */}
-                        <Button variant="primary" type="submit">Save</Button>
-                        {selectedImages.length > 0 && (<Button variant="primary" onClick={handleNewAlbum}>Create new album</Button>)}
-                        <Button type="button" onClick={() => navigate(`/review/${albumId}`)}>Get link</Button>
+                        <div className="mt-4">
+                            <Button className="mr-3" variant="primary" type="submit">Save</Button>
+                            {selectedImages.length > 0 && (<Button className="mr-3" variant="primary" onClick={handleNewAlbum}>Create new album</Button>)}
+                            {/* TODO: Do not redirect to the page, just show the link */}
+                            <Button type="button" onClick={() => navigate(`/review/${albumId}`)}>Get link</Button>
+                        </div>
                     </Form>
                 )}
 

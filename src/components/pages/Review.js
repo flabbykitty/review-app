@@ -21,6 +21,7 @@ const Review = () => {
     }, [images])
 
     useEffect(() => {
+        // TODO: Fix bug that sometimes the save button doesn't show up although all pictures have been rated...
         if(images.length > 0) {
             const checkArray = ratingArray.filter(image => image.rating !== null)
             if(checkArray.length === images.length) {
@@ -29,14 +30,23 @@ const Review = () => {
         }
     }, [ratingArray])
 
+    // Such hacker. Much wow.
     const handleRating = async (e) => {
-        console.log(e.target.class)
         if(e.target.attributes.rating.textContent === "up") {
+            if(!e.target.classList.contains('btn-sucess')) {
+                e.target.classList.add('btn-success')
+                e.target.parentElement.lastChild.classList.remove('btn-danger')
+            }
+
             setRatingArray(ratingArray.map((img) => img.imagePath === e.target.attributes.image.textContent ? { ...img, rating: true } : img));
 
         } else if(e.target.attributes.rating.textContent === "down") {
-            setRatingArray(ratingArray.map((img) => img.imagePath === e.target.attributes.image.textContent ? { ...img, rating: false } : img));
+            if(!e.target.classList.contains('btn-danger')) {
+                e.target.classList.add('btn-danger')
+                e.target.parentElement.firstChild.classList.remove('btn-success')
+            }
 
+            setRatingArray(ratingArray.map((img) => img.imagePath === e.target.attributes.image.textContent ? { ...img, rating: false } : img));
         }
     }
 
@@ -117,8 +127,8 @@ const Review = () => {
                                                 <Card.Body>
                                                     <Card.Title>{image.name}</Card.Title>
                                                     <div className="d-flex justify-content-between">
-                                                        <Button image={image.path} rating="up"onClick={handleRating} variant="primary">👍</Button>
-                                                        <Button image={image.path} rating="down" onClick={handleRating} variant="primary">👎</Button>
+                                                        <Button image={image.path} rating="up"onClick={handleRating} variant="white">👍</Button>
+                                                        <Button image={image.path} rating="down" onClick={handleRating} variant="white">👎</Button>
                                                     </div>
                                                 </Card.Body>
                                             </Card>
