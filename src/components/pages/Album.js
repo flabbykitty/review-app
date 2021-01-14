@@ -2,10 +2,11 @@ import React, { useCallback, useState, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useParams, useNavigate } from 'react-router-dom'
 import { db, storage } from '../../firebase/index'
-import { Alert, Row, Col, Image, Form, Button } from 'react-bootstrap'
+import { Alert, Row, Col, Card, Form, Button } from 'react-bootstrap'
 import { AuthContext } from '../../contexts/AuthContext'
 import firebase from 'firebase/app'
 import useAlbum from '../../hooks/useAlbum'
+import { SRLWrapper } from 'simple-react-lightbox'
 
 // TODO: Make component smaller
 
@@ -21,6 +22,7 @@ const Album = () => {
     const onDrop = useCallback(acceptedFiles => {
         setError(null)
         acceptedFiles.forEach(image => {
+            // TODO: Squash strange bug that get's the old albums images (??) when adding new image directly after creating a new album from selected imaged??
             uploadImageToStorage(image, albumId)
         })
     }, [])
@@ -37,8 +39,10 @@ const Album = () => {
     const uploadImageToStorage = async (image, id) => {
         let storageRef = storage.ref(`images/${currentUser.uid}/${image.name}`)
 
+        // Check if the ref already exists
         storageRef.getMetadata()
         .then(() => {
+            // If the ref already exists:
             storageRef.getMetadata().then((metadata) => {
                 const img = {
                     name: metadata.name,
@@ -52,6 +56,7 @@ const Album = () => {
             })
         })
         .catch(() => {
+            // If the ref does not exist:
             const uploadTask = storageRef.put(image);
 
             uploadTask.then(async() => {
@@ -93,9 +98,9 @@ const Album = () => {
                 setError(error)
             })
         });
-
     }
 
+    // TODO: Fix everything breaking when trying to create a new album from selected images... 
     const handleNewAlbum = () => {
         db.collection("albums").add({
             title: 'New album',
@@ -108,11 +113,17 @@ const Album = () => {
                 const ref = storage.refFromURL(image)
                 uploadImageToStorage(ref, docRef.id)
             })
+            setSelectedImages([])
             navigate(`/album/${docRef.id}`)
         })
         .catch(error => {
             setError(error)
         });
+    }
+
+    const handleSelectedImages = (e) => {
+        setSelectedImages(prev => [...prev, e.target.attributes.target])
+        // TODO: Change the + to a tick, and change color to green
     }
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
@@ -149,14 +160,22 @@ const Album = () => {
                             <>
                             {images.length > 0 
                             ? (
-                                <div className="grid">
-                                {images.map(image => (
-                                    <div key={image.name} className="image-container">
-                                        <span onClick={e => setSelectedImages(prev => [...prev, e.target.parentElement.children[1].src])} className="add">+</span>
-                                        <Image src={image.url} fluid/>
+                                <SRLWrapper>
+                                {/* Have I done something here to make it break?? */}
+                                    <div className="grid">
+                                    {images.map(image => (
+                                            <Card key={image.name}>
+                                                <Card.Img variant="top" src={image.url} />
+                                                <Card.Body>
+                                                    <Card.Title>{image.name}</Card.Title>
+                                                    <div className="d-flex justify-content-between">
+                                                        <Button target={image.url} onClick={handleSelectedImages} variant="primary">+</Button>
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                    ))}
                                     </div>
-                                ))}
-                                </div>
+                                </SRLWrapper>
                             ) 
                             : (
                                 <p>There are no images in this album yet...</p>
@@ -164,7 +183,7 @@ const Album = () => {
                             </>
                         )
                         : (<p>Loading...</p>)}
-
+                        {/* TODO: Remove the save button, and just have it save automatically? Can I do that? */}
                         <Button variant="primary" type="submit">Save</Button>
                         {selectedImages.length > 0 && (<Button variant="primary" onClick={handleNewAlbum}>Create new album</Button>)}
                         <Button type="button" onClick={() => navigate(`/review/${albumId}`)}>Get link</Button>

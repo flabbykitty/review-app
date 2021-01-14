@@ -3,6 +3,7 @@ import {BrowserRouter, Route, Routes, } from 'react-router-dom'
 import { Container } from 'react-bootstrap';
 import AuthContextProvider from './contexts/AuthContext'
 import AuthRoute from './routes/AuthRoute'
+import SimpleReactLightbox from 'simple-react-lightbox'
 
 //Compontens
 import Home from './components/pages/Home'
@@ -21,46 +22,50 @@ const App = () => {
 
 			<AuthContextProvider>
 
-				<Navigation/>
+				<SimpleReactLightbox>
 
-				<Container>
+					<Navigation/>
 
-					<Routes>
-						<Route path="/">
-							<Home/>
-						</Route>
+					<Container>
 
-						<Route path="/login">
-							<Login/>
-						</Route>
+						<Routes>
+							<Route path="/">
+								<Home/>
+							</Route>
 
-						<Route path="/logout">
-							<Logout/>
-						</Route>
+							<Route path="/login">
+								<Login/>
+							</Route>
 
-						<Route path="/signup">
-							<Signup/>
-						</Route>
-						
-						<AuthRoute path="/add-album">
-							<AddAlbum/>
-						</AuthRoute>
+							<Route path="/logout">
+								<Logout/>
+							</Route>
 
-						<AuthRoute path="/album/:albumId">
-							<Album/>
-						</AuthRoute>
+							<Route path="/signup">
+								<Signup/>
+							</Route>
+							
+							<AuthRoute path="/add-album">
+								<AddAlbum/>
+							</AuthRoute>
 
-						<AuthRoute path="/albums">
-							<Albums/>
-						</AuthRoute>
+							<AuthRoute path="/album/:albumId">
+								<Album/>
+							</AuthRoute>
 
-						<Route path="/review/:albumId">
-							<Review/>
-						</Route>
-						
-					</Routes>
+							<AuthRoute path="/albums">
+								<Albums/>
+							</AuthRoute>
 
-				</Container>
+							<Route path="/review/:albumId">
+								<Review/>
+							</Route>
+							
+						</Routes>
+
+					</Container>
+
+				</SimpleReactLightbox>
 
 			</AuthContextProvider>
 

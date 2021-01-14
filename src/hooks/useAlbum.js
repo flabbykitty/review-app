@@ -5,6 +5,7 @@ const useAlbum = (albumId) => {
     const [title, setTitle] = useState(null)
     const [description, setDescription] = useState(null)
     const [images, setImages] = useState([])
+    const [owner, setOwner] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
 
@@ -15,6 +16,7 @@ const useAlbum = (albumId) => {
             setTitle(doc.data().title)
             setDescription(doc.data().description)
             setImages(doc.data().images)
+            setOwner(doc.data().owner)
         } else {
             setError('This album does not exist!')
         }
@@ -25,7 +27,7 @@ const useAlbum = (albumId) => {
 
     }, [albumId])
 
-    return {title, setTitle, description, setDescription, images, setImages, error, setError, loading}
+    return {title, setTitle, description, setDescription, images, setImages, error, setError, loading, owner}
 }
 
 export default useAlbum
