@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from 'react'
 import { db } from '../../firebase/index'
 import { AuthContext } from '../../contexts/AuthContext'
 import AlbumListItem from '../AlbumListItem'
+import { Link } from 'react-router-dom'
 
 const Albums = () => {
     const { currentUser } = useContext(AuthContext)
@@ -27,13 +28,19 @@ const Albums = () => {
 
     return (
         <div>
-        {/* TODO: If the user does not have any albums */}
             {!albums ? (<p>Loading...</p>) : (
-                <ul>
-                    {albums.map(album => (
-                        <AlbumListItem album={album} key={album.id} />
-                    ))}
-                </ul>
+                <>
+                    {albums.length > 0
+                    ? (
+                        <ul>
+                            {albums.map(album => (
+                                <AlbumListItem album={album} key={album.id} />
+                            ))}
+                        </ul>
+                    )
+                    : (<p>You have no albums yet. Add one <Link to="/add-album">here</Link>.</p>)
+                    }
+                </>
             )}
         </div>
     )
