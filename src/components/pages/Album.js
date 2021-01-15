@@ -123,9 +123,13 @@ const Album = () => {
     }
 
     const handleSelectedImages = (e) => {
-        // TODO: I wanna be able to deselect images also...
-        setSelectedImages(prev => [...prev, e.target.attributes.target.textContent])
-        // TODO: Change the + to a tick, and change color to green
+        const url = e.target.attributes.target.textContent
+
+        if(selectedImages.includes(url)) {
+            setSelectedImages(selectedImages.filter(image => image !== url))
+        } else {
+            setSelectedImages(prev => [...prev, url])     
+        }
     }
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
@@ -170,7 +174,7 @@ const Album = () => {
                                             <Card.Body>
                                                 <Card.Title>{image.name}</Card.Title>
                                                 <div className="d-flex justify-content-between">
-                                                    <Button target={image.url} onClick={handleSelectedImages} variant="primary">+</Button>
+                                                    <input target={image.url} onClick={handleSelectedImages} type="checkbox"/>
                                                 </div>
                                             </Card.Body>
                                         </Card>

@@ -29,16 +29,20 @@ const Albums = () => {
 
     return (
         <div>
-            {albums.length > 0
-            ? (
-                <ul>
-                    {albums.map(album => (
-                        <AlbumListItem album={album} key={album.id} />
-                    ))}
-                </ul>
-            )
-            : (<p>You have no albums yet. Add one <Link to="/add-album">here</Link>.</p>)
-            }
+            {albums.length <= 0 ? (<Spinner animation="border" />) : (
+                <>
+                    {albums.length > 0
+                    ? (
+                        <ul>
+                            {albums.map(album => (
+                                <AlbumListItem album={album} key={album.id} />
+                            ))}
+                        </ul>
+                    )
+                    : (<p>You have no albums yet. Add one <Link to="/add-album">here</Link>.</p>)
+                    }
+                </>
+            )}
         </div>
     )
 }

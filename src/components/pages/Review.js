@@ -13,6 +13,7 @@ const Review = () => {
     const {title, description, images, setImages, error, loading, owner} = useAlbum(albumId)
     const [ratingArray, setRatingArray] = useState([])
     const [ready, setReady] = useState(false)
+    const [sent, setSent] = useState(false)
     
     useEffect(() => {
         images.forEach(image => {
@@ -21,7 +22,6 @@ const Review = () => {
     }, [images])
 
     useEffect(() => {
-        // TODO: Fix bug that sometimes the save button doesn't show up although all pictures have been rated...
         if(images.length > 0) {
             const checkArray = ratingArray.filter(image => image.rating !== null)
             if(checkArray.length === images.length) {
@@ -50,7 +50,6 @@ const Review = () => {
         }
     }
 
-    // TODO: Fix bug where after sending it, it shows the images that were chosen
     const handleSend = () => {
         const newArray = ratingArray.filter(image => image.rating === true)
         const date = new Date()
@@ -83,8 +82,7 @@ const Review = () => {
             setError(error)
         });
 
-        // TODO: Set some kind of alert thank you, this is now sent or whatever
-
+        setSent(true)
     }
 
     const addImageToDb = (img, id) => {
@@ -106,46 +104,58 @@ const Review = () => {
         <Row>
             <Col xs={{ span: 10, offset: 1 }}>
 
-            {loading 
-                ? (<Spinner animation="border" />) 
-                : (
-                    <Form>
-                        {error && (<Alert variant="danger">{error}</Alert>)}
+        {sent
+        ? (
+            <>
+                {/* TODO: Make this better */}
+                <p>The images has been sent for review</p>
+            </>
+        )
+        : (
+            <>
+                {loading 
+                    ? (<Spinner animation="border" />) 
+                    : (
+                        <Form>
+                            {error && (<Alert variant="danger">{error}</Alert>)}
 
-                        <h1>{title}</h1>
-                        <p>{description}</p>
+                            <h1>{title}</h1>
+                            <p>{description}</p>
 
-                        {images ? (
-                            <>
-                            {images.length > 0 
-                            ? ( 
-                                <SRLWrapper>
-                                    <div className="grid">
-                                    {images.map(image => (
-                                            <Card key={image.name}>
-                                                <Card.Img variant="top" src={image.url} />
-                                                <Card.Body>
-                                                    <Card.Title>{image.name}</Card.Title>
-                                                    <div className="d-flex justify-content-between">
-                                                        <Button image={image.path} rating="up"onClick={handleRating} variant="white">👍</Button>
-                                                        <Button image={image.path} rating="down" onClick={handleRating} variant="white">👎</Button>
-                                                    </div>
-                                                </Card.Body>
-                                            </Card>
-                                    ))}
-                                    </div>
-                                </SRLWrapper>
-                            ) 
-                            : (
-                                <p>There are no images in this album</p>
-                            )}
-                            </>
-                        )
-                        : (<Spinner animation="border" />)}
-                        {ready && (<Button className="mt-4" onClick={handleSend}>Save</Button>)}
-                        
-                    </Form>
-                )}
+                            {images ? (
+                                <>
+                                {images.length > 0 
+                                ? ( 
+                                    <SRLWrapper>
+                                        <div className="grid">
+                                        {images.map(image => (
+                                                <Card key={image.name}>
+                                                    <Card.Img variant="top" src={image.url} />
+                                                    <Card.Body>
+                                                        <Card.Title>{image.name}</Card.Title>
+                                                        <div className="d-flex justify-content-between">
+                                                            <Button image={image.path} rating="up"onClick={handleRating} variant="white">👍</Button>
+                                                            <Button image={image.path} rating="down" onClick={handleRating} variant="white">👎</Button>
+                                                        </div>
+                                                    </Card.Body>
+                                                </Card>
+                                        ))}
+                                        </div>
+                                    </SRLWrapper>
+                                ) 
+                                : (
+                                    <p>There are no images in this album</p>
+                                )}
+                                </>
+                            )
+                            : (<Spinner animation="border" />)}
+                            {ready && (<Button className="mt-4" onClick={handleSend}>Save</Button>)}
+                            
+                        </Form>
+                    )}
+                </>
+
+        )}
 
             </Col>
         </Row>
