@@ -11,19 +11,19 @@ const useAlbum = (albumId) => {
 
     useEffect(() => {
         db.collection("albums").doc(albumId).get()
-    .then(doc => {
-        if (doc.exists) {
-            setTitle(doc.data().title)
-            setDescription(doc.data().description)
-            setImages(doc.data().images)
-            setOwner(doc.data().owner)
-        } else {
-            setError('This album does not exist!')
-        }
-        setLoading(false)
-    }).catch(error => {
-        setError(error);
-    });
+        .then(doc => {
+            if (doc.exists) {
+                setTitle(doc.data().title)
+                setDescription(doc.data().description)
+                setImages(doc.data().images)
+                setOwner(doc.data().owner)
+            } else {
+                setError('This album does not exist!')
+            }
+            setLoading(false)
+        }).catch(error => {
+            setError(error);
+        });
 
     }, [albumId])
 

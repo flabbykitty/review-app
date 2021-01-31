@@ -7,8 +7,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import firebase from 'firebase/app'
 import useAlbum from '../../hooks/useAlbum'
 import { SRLWrapper } from 'simple-react-lightbox'
-
-// TODO: Make component smaller
+import { ToastContainer, toast } from 'react-toastify'
 
 const Album = () => {
     const { albumId } = useParams()
@@ -23,10 +22,9 @@ const Album = () => {
     const onDrop = useCallback(acceptedFiles => {
         setError(null)
         acceptedFiles.forEach(image => {
-            // TODO: Squash strange bug that get's the old albums images (??) when adding new image directly after creating a new album from selected imaged??
             uploadImageToStorage(image, albumId)
         })
-    }, [])
+    }, [albumId])
 
     const handleSubmit = async (e) => {
         setError(null)
@@ -35,15 +33,18 @@ const Album = () => {
             title,
             description,
         });
+
+        toast.success('Album has been updated! 🎉');
     }
 
-    const uploadImageToStorage = async (image, id) => {
+    const uploadImageToStorage = (image, id) => {
         let storageRef = storage.ref(`images/${currentUser.uid}/${image.name}`)
+
+        checkIfImageIsInAlbum(`images/${currentUser.uid}/${image.name}`, id)
 
         // Check if the ref already exists
         storageRef.getMetadata()
         .then(() => {
-            // TODO: Set error message if the image is already in that album, not just in storage
             // If the ref already exists:
             storageRef.getMetadata().then((metadata) => {
                 const img = {
@@ -132,10 +133,28 @@ const Album = () => {
         }
     }
 
+    const checkIfImageIsInAlbum = (imagePath, id) => {
+        db.collection("albums").doc(id).get()
+        .then(doc => {
+            for (let i = 0; i < doc.data().images.length; i++) {
+                if(doc.data().images[i].path === imagePath) {
+                    toast.error('This image is already in the album');
+                    return
+                }
+            }
+        })
+    }
+
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
     return (
         <Row>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar
+            />
+
             <Col xs={{ span: 10, offset: 1 }}>
 
             {loading 
@@ -143,7 +162,6 @@ const Album = () => {
                 : (
                     <Form onSubmit={handleSubmit}>
                         {error && (<Alert variant="danger">{error}</Alert>)}
-                        {/* TODO: Set save success */}
 
                         <Form.Group>
                             <Form.Control className="title-input" type="text" onChange={e => setTitle(e.target.value)} value={title} />
@@ -193,7 +211,7 @@ const Album = () => {
                             {selectedImages.length > 0 && (<Button className="mr-3" variant="primary" onClick={handleNewAlbum}>Create new album</Button>)}
                             <Button type="button" onClick={() => setLink(`${window.location.origin}/review/${albumId}`)}>Get link</Button>
                         </div>
-                        
+
                         {link && (
                             <div className="d-inline-block bg-light p-2 mt-3">
                                 <code>{link}</code>

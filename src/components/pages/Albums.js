@@ -29,7 +29,7 @@ const Albums = () => {
 
     return (
         <div>
-            {albums.length <= 0 ? (<Spinner animation="border" />) : (
+            {albums.length < 0 ? (<Spinner animation="border" />) : (
                 <>
                     {albums.length > 0
                     ? (
